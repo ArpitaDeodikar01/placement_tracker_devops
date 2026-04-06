@@ -23,11 +23,18 @@ pipeline {
 
         stage('Build Application') {
             steps {
-                bat 'mvn clean package'
+                bat 'mvn clean package -DskipTests'
             }
         }
 
-        stage('Run Tests') {
+        stage('Start App for Testing') {
+            steps {
+                bat 'start /B java -jar target/placement-tracker-0.0.1-SNAPSHOT.jar'
+                bat 'timeout /t 15'
+            }
+        }
+
+        stage('Run Selenium Tests') {
             steps {
                 bat 'mvn test'
             }
