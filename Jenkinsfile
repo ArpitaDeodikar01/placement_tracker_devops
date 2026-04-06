@@ -59,7 +59,7 @@ pipeline {
             steps {
                 bat 'docker stop %CONTAINER_NAME% || exit 0'
                 bat 'docker rm %CONTAINER_NAME% || exit 0'
-                bat 'docker run -d -p 6060:8090 --name %CONTAINER_NAME% %IMAGE_NAME%'
+                bat 'docker run -d -p 7070:8090 --name %CONTAINER_NAME% %IMAGE_NAME%'
             }
         }
     }
