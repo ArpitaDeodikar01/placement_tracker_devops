@@ -14,14 +14,14 @@ pipeline {
 
     stages {
 
-        stage('Checkout Code') {
+        stage('Fetch Code') {
             steps {
                 git branch: 'main',
                 url: 'https://github.com/ArpitaDeodikar01/placement_tracker_devops.git'
             }
         }
 
-        stage('Clean Build') {
+        stage('Build Application') {
             steps {
                 bat 'mvn clean install -DskipTests'
             }
@@ -33,50 +33,53 @@ pipeline {
             }
         }
 
+        stage('Start Application (Required for Selenium)') {
+            steps {
+                echo 'Starting Spring Boot application...'
+                bat 'start /B java -jar target/*.jar'
+
+                echo 'Waiting for application to boot...'
+                bat 'timeout 30'
+            }
+        }
+
         stage('Run Unit Tests') {
             steps {
                 bat 'mvn test'
             }
         }
 
-        stage('Start Application (Test Mode)') {
-            steps {
-                bat 'start /B java -jar target/*.jar'
-                bat 'timeout 15'
-            }
-        }
-
         stage('Selenium Integration Tests') {
             steps {
+                echo 'Running Selenium tests...'
                 bat 'mvn test'
             }
         }
 
-        stage('Docker Build') {
+        stage('Build Docker Image') {
             steps {
-                bat 'docker build -t %IMAGE_NAME% .'
-            }
-        }
-
-        stage('Stop Old Container') {
-            steps {
-                bat 'docker rm -f %CONTAINER_NAME% || exit 0'
+                bat 'docker build --no-cache -t %IMAGE_NAME% .'
             }
         }
 
         stage('Deploy Container') {
             steps {
+                bat 'docker stop %CONTAINER_NAME% || exit 0'
+                bat 'docker rm %CONTAINER_NAME% || exit 0'
                 bat 'docker run -d -p 7070:8090 --name %CONTAINER_NAME% %IMAGE_NAME%'
             }
         }
     }
 
     post {
+        always {
+            echo 'Pipeline execution completed'
+        }
         success {
-            echo 'CI/CD SUCCESS 🚀 Application deployed successfully'
+            echo 'SUCCESS: CI/CD Pipeline completed successfully 🚀'
         }
         failure {
-            echo 'CI/CD FAILED ❌ Check logs'
+            echo 'FAILURE: Check logs for debugging ❌'
         }
     }
 }
