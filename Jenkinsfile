@@ -29,12 +29,12 @@ pipeline {
 
         // ✅ START APP BEFORE TESTING
         stage('Start Application') {
-            steps {
-                echo 'Starting Spring Boot app...'
-                bat 'start /B java -jar target\\placement-tracker-0.0.2-SNAPSHOT.jar'
-                bat 'timeout /t 25'
-            }
-        }
+    steps {
+        echo 'Starting Spring Boot app...'
+        bat 'start /B java -jar target\\placement-tracker-0.0.2-SNAPSHOT.jar'
+        bat 'ping 127.0.0.1 -n 25 > nul'
+    }
+}
 
         // 🔥 THIS IS YOUR ACTUAL CI TESTING
         stage('Run Tests') {
