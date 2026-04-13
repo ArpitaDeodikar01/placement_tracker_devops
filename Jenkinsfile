@@ -14,65 +14,69 @@ pipeline {
 
     stages {
 
-        stage('Fetch Code') {
+        stage('Checkout Code') {
             steps {
                 git branch: 'main',
-                url: 'https://github.com/Zoowee23/placement_tracker_devops.git'
+                url: 'https://github.com/ArpitaDeodikar01/placement_tracker_devops.git'
             }
         }
 
-        stage('Build Application') {
+        stage('Clean Build') {
             steps {
                 bat 'mvn clean install -DskipTests'
             }
         }
 
-        stage('Verify JAR Exists') {
+        stage('Verify Build Output') {
             steps {
                 bat 'dir target'
             }
         }
 
-        stage('Start App for Selenium Testing') {
-            steps {
-                // start app in background
-                bat 'start /B java -jar target/*.jar'
-
-                // wait for app to start
-                bat 'ping 127.0.0.1 -n 15 > nul'
-            }
-        }
-
-        stage('Run Selenium Tests') {
+        stage('Run Unit Tests') {
             steps {
                 bat 'mvn test'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Start Application (Test Mode)') {
             steps {
-                bat 'docker build --no-cache -t %IMAGE_NAME% .'
+                bat 'start /B java -jar target/*.jar'
+                bat 'timeout 15'
+            }
+        }
+
+        stage('Selenium Integration Tests') {
+            steps {
+                bat 'mvn test'
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                bat 'docker build -t %IMAGE_NAME% .'
+            }
+        }
+
+        stage('Stop Old Container') {
+            steps {
+                bat 'docker rm -f %CONTAINER_NAME% || exit 0'
             }
         }
 
         stage('Deploy Container') {
             steps {
-                bat 'docker stop %CONTAINER_NAME% || exit 0'
-                bat 'docker rm %CONTAINER_NAME% || exit 0'
                 bat 'docker run -d -p 7070:8090 --name %CONTAINER_NAME% %IMAGE_NAME%'
             }
         }
     }
 
     post {
-        always {
-            echo 'Pipeline execution completed'
-        }
         success {
-            echo 'SUCCESS: Application deployed successfully 🚀'
+            echo 'CI/CD SUCCESS 🚀 Application deployed successfully'
         }
         failure {
-            echo 'FAILURE: Check logs for debugging ❌'
+            echo 'CI/CD FAILED ❌ Check logs'
         }
     }
 }
