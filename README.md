@@ -1,9 +1,13 @@
-<<<<<<< HEAD
-asandiaksdnaodaodwodoow
-dhwediwdwooowowpqpq
-wdweubd 
-commit 3 in main
-4th test
-=======
-test 
->>>>>>> 80b8987 (test webhook trigger)
+## Problem Statement
+Students struggle to track placement preparation, job applications, and progress efficiently.
+
+## Objective
+To build a Placement Tracker system that:
+- Tracks job applications
+- Monitors preparation progress
+- Provides structured workflow
+
+## DevOps Relevance
+- Continuous integration ensures reliability
+- Automated deployment improves availability
+- Version control ensures collaboration
