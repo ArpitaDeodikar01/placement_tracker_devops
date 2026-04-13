@@ -20,9 +20,26 @@ pipeline {
             }
         }
 
+        // ✅ Build WITHOUT running tests
         stage('Build Application') {
             steps {
-                bat 'mvn clean install -DskipTests=true'
+                bat 'mvn clean install -DskipTests'
+            }
+        }
+
+        // ✅ START APP BEFORE TESTING
+        stage('Start Application') {
+            steps {
+                echo 'Starting Spring Boot app...'
+                bat 'start /B java -jar target\\placement-tracker-0.0.2-SNAPSHOT.jar'
+                bat 'timeout /t 25'
+            }
+        }
+
+        // 🔥 THIS IS YOUR ACTUAL CI TESTING
+        stage('Run Tests') {
+            steps {
+                bat 'mvn test'
             }
         }
 
