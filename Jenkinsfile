@@ -33,15 +33,20 @@ pipeline {
             }
         }
 
-        stage('Start Application (Required for Selenium)') {
-            steps {
-                echo 'Starting Spring Boot application...'
-                bat 'start /B java -jar target/*.jar'
+       stage('Start Application (Required for Selenium)') {
+    steps {
+        echo 'Starting Spring Boot application...'
 
-                echo 'Waiting for application to boot...'
-                bat 'timeout 30'
-            }
-        }
+        bat '''
+        for %%f in (target\\*.jar) do (
+            start "" java -jar "%%f"
+        )
+        '''
+
+        echo 'Waiting for application to boot...'
+        bat 'ping 127.0.0.1 -n 25 > nul'
+    }
+}
 
         stage('Run Unit Tests') {
             steps {
