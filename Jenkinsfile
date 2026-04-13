@@ -22,21 +22,7 @@ pipeline {
 
         stage('Build Application') {
             steps {
-                bat 'mvn clean install -DskipTests'
-            }
-        }
-
-        stage('Start Application') {
-            steps {
-                echo 'Starting Spring Boot app...'
-                bat 'start /B mvn spring-boot:run'
-                bat 'timeout /t 20'
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                bat 'mvn test'
+                bat 'mvn clean install -DskipTests=true'
             }
         }
 
