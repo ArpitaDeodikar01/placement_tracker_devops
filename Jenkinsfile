@@ -1,5 +1,4 @@
 pipeline {
-
     agent any
 
     tools {
@@ -33,58 +32,51 @@ pipeline {
             }
         }
 
-       stage('Start Application (Required for Selenium)') {
-    steps {
-        echo 'Starting Spring Boot application...'
-
-        bat '''
-        for %%f in (target\\*.jar) do (
-            start "" java -jar "%%f"
-        )
-        '''
-
-        echo 'Waiting for application to boot...'
-        bat 'ping 127.0.0.1 -n 25 > nul'
-    }
-}
-
-        stage('Run Unit Tests') {
+        stage('Unit Tests') {
             steps {
                 bat 'mvn test'
             }
         }
 
-        stage('Selenium Integration Tests') {
+        stage('Selenium Tests') {
             steps {
-                echo 'Running Selenium tests...'
-                bat 'mvn test'
+                echo 'Running Selenium tests separately...'
+                bat 'mvn test -Dtest=*Selenium*'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Docker Build') {
             steps {
-                bat 'docker build --no-cache -t %IMAGE_NAME% .'
+                bat 'docker build -t %IMAGE_NAME% .'
             }
         }
 
-        stage('Deploy Container') {
+        stage('Stop Old Container') {
             steps {
                 bat 'docker stop %CONTAINER_NAME% || exit 0'
                 bat 'docker rm %CONTAINER_NAME% || exit 0'
+            }
+        }
+
+        stage('Run Container') {
+            steps {
                 bat 'docker run -d -p 7070:8090 --name %CONTAINER_NAME% %IMAGE_NAME%'
             }
         }
     }
 
     post {
-        always {
-            echo 'Pipeline execution completed'
-        }
         success {
-            echo 'SUCCESS: CI/CD Pipeline completed successfully 🚀'
+            echo 'SUCCESS: CI/CD Pipeline completed 🚀'
         }
+
         failure {
-            echo 'FAILURE: Check logs for debugging ❌'
+            echo 'FAILURE: Check logs ❌'
+        }
+
+        always {
+            echo 'Cleaning workspace...'
+            cleanWs()
         }
     }
 }
