@@ -18,7 +18,7 @@ public class PlacementTrackerTest {
 
         WebDriver driver = new ChromeDriver();
 
-        driver.get("http://localhost:9090");
+        driver.get("http://localhost:8090");
 
         System.out.println("Application opened successfully");
 
