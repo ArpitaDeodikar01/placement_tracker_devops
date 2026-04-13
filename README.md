@@ -11,3 +11,5 @@ To build a Placement Tracker system that:
 - Continuous integration ensures reliability
 - Automated deployment improves availability
 - Version control ensures collaboration
+## Development Branch
+This branch is used for testing features before production.
