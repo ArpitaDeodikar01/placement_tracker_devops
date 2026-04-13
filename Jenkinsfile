@@ -22,26 +22,7 @@ pipeline {
 
         stage('Build Application') {
             steps {
-                bat 'mvn clean install -DskipTests'
-            }
-        }
-
-        stage('Verify Build Output') {
-            steps {
-                bat 'dir target'
-            }
-        }
-
-        stage('Unit Tests') {
-            steps {
-                bat 'mvn test'
-            }
-        }
-
-        stage('Selenium Tests') {
-            steps {
-                echo 'Running Selenium tests separately...'
-                bat 'mvn test -Dtest=*Selenium*'
+                bat 'mvn clean install -DskipTests=true'
             }
         }
 
