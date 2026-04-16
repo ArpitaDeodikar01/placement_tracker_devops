@@ -137,6 +137,26 @@
         .btn-delete:hover { background: #c0392b; }
 
         .no-topics { text-align: center; color: #999; padding: 20px 0; }
+
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .suggestion-chip {
+            padding: 4px 12px;
+            background: #eff6ff;
+            border: 1px solid #93c5fd;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            color: #1d4ed8;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .suggestion-chip:hover { background: #bfdbfe; }
     </style>
 </head>
 <body>
@@ -147,8 +167,46 @@
 <div class="form-card">
     <h2>Add New Topic</h2>
     <form th:action="@{/add}" th:object="${newTopic}" method="post">
+        <!-- Quick-pick dropdown -->
+        <div style="margin-bottom:10px;">
+            <select id="topicSuggestions" onchange="fillTopic(this)" style="width:100%;padding:9px 12px;border:1px solid #93c5fd;border-radius:5px;font-size:0.95rem;color:#1d4ed8;background:#eff6ff;">
+                <option value="">-- Pick a topic or type below --</option>
+                <optgroup label="Data Structures">
+                    <option>Arrays</option>
+                    <option>Strings</option>
+                    <option>Linked List</option>
+                    <option>Stack</option>
+                    <option>Queue</option>
+                    <option>Trees</option>
+                    <option>Binary Search Tree</option>
+                    <option>Heaps</option>
+                    <option>Graphs</option>
+                    <option>Trie</option>
+                    <option>Hashing</option>
+                </optgroup>
+                <optgroup label="Algorithms">
+                    <option>Dynamic Programming</option>
+                    <option>Recursion &amp; Backtracking</option>
+                    <option>Divide and Conquer</option>
+                    <option>Greedy</option>
+                    <option>Binary Search</option>
+                    <option>Sorting Algorithms</option>
+                    <option>Sliding Window</option>
+                    <option>Two Pointers</option>
+                    <option>Bit Manipulation</option>
+                </optgroup>
+                <optgroup label="Core CS">
+                    <option>OOP Concepts</option>
+                    <option>OS Concepts</option>
+                    <option>DBMS &amp; SQL</option>
+                    <option>Computer Networks</option>
+                    <option>System Design Basics</option>
+                </optgroup>
+            </select>
+        </div>
         <div class="form-row">
             <input type="text"
+                   id="topicInput"
                    th:field="*{topicName}"
                    placeholder="e.g. Arrays, Dynamic Programming..."
                    autocomplete="off"/>
@@ -202,5 +260,13 @@
     </table>
 </div>
 
+<script>
+    function fillTopic(select) {
+        if (select.value) {
+            document.getElementById('topicInput').value = select.value;
+            select.value = '';
+        }
+    }
+</script>
 </body>
 </html>
